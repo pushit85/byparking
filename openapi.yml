@@ -1,0 +1,482 @@
+---
+openapi: 3.0.2
+info:
+  title: Conciliation
+  version: 1.0.0
+  description: ""
+paths:
+  /{business}/conciliation:
+    get:
+      tags:
+      - quad-conc-api
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conciliation-Response'
+          description: Conciliation configuration
+    parameters:
+    - name: business
+      schema:
+        enum:
+        - FACL
+        - TOCL
+        - IKCL
+        type: string
+      in: path
+      required: true
+    - name: process
+      description: ""
+      schema:
+        type: string
+      in: query
+      required: true
+  /quadrature:
+    get:
+      tags:
+      - quad-conc-api
+      parameters:
+      - example: cl/facl/ECOMPAY_CONCILIACION_18082021.csv
+        name: fileName
+        description: ""
+        schema:
+          type: string
+        in: query
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quadrature-Response'
+          description: ' Quadrature Response'
+      summary: Get consistency configuration
+components:
+  schemas:
+    Conciliation-Response:
+      title: Root Type for Conciliation-Response
+      description: ""
+      type: object
+      properties:
+        conciliationId:
+          type: number
+        date:
+          type: string
+        origin:
+          type: object
+          properties:
+            "1":
+              type: object
+              properties:
+                id:
+                  type: number
+                categorization:
+                  type: number
+                pivot:
+                  type: boolean
+            "2":
+              type: object
+              properties:
+                id:
+                  type: number
+                categorization:
+                  type: number
+                pivot:
+                  type: boolean
+            "3":
+              type: object
+              properties:
+                id:
+                  type: number
+                categorization:
+                  type: number
+                pivot:
+                  type: boolean
+        isOrigin:
+          type: object
+          properties:
+            originId:
+              type: number
+            conciliationId:
+              type: array
+              items:
+                type: number
+        keys:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+              date:
+                type: string
+              principal:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    column:
+                      type: string
+                    tolerance:
+                      type: string
+              additional:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    column:
+                      type: object
+                      properties:
+                        "1":
+                          type: string
+                        "2":
+                          type: string
+                    tolerance:
+                      type: string
+              enrich:
+                type: array
+                items:
+                  type: string
+      example:
+        conciliationId: 2
+        date: 07/01/21
+        origin:
+          "1":
+            id: 1
+            categorization: 1
+            pivot: true
+          "2":
+            id: 2
+            categorization: 1
+            pivot: false
+          "3":
+            id: 3
+            categorization: 2
+            pivot: false
+        isOrigin:
+          originId: 4
+          conciliationId:
+          - 69
+        keys:
+        - id: 3
+          date: 07/01/21
+          principal:
+          - column: local
+          additional:
+          - column:
+              "1": monto
+              "2": montototal
+          enrich:
+          - transaction_stage
+    Quadrature-Response:
+      title: Root Type for Quadrature-Response
+      description: ""
+      required:
+      - business
+      - categorization
+      - conciliation
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        shortName:
+          type: string
+        description:
+          type: string
+        categorization:
+          type: number
+        business:
+          type: string
+        conciliation:
+          type: array
+          items:
+            type: string
+        consistency:
+          type: boolean
+        detail:
+          type: object
+          properties:
+            fileFormat:
+              type: string
+            dateFormat:
+              type: string
+            titles:
+              type: boolean
+            separator:
+              type: object
+              properties:
+                type:
+                  type: string
+                value:
+                  type: string
+            numOfRecords:
+              type: number
+            records:
+              type: array
+              items:
+                type: object
+                properties:
+                  record:
+                    type: number
+                  type:
+                    type: string
+                  identifier:
+                    type: string
+                  configuration:
+                    type: object
+                  settings:
+                    type: object
+                    properties:
+                      destination:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            warehouse:
+                              type: string
+                            table:
+                              type: string
+                      trim:
+                        type: boolean
+                      underscore:
+                        type: boolean
+                      letterCase:
+                        type: string
+                      processFields:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            description:
+                              type: string
+                            format:
+                              type: string
+                            settings:
+                              type: object
+                              properties:
+                                prefix:
+                                  type: string
+                                suffix:
+                                  type: string
+                                homologation:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      name:
+                                        type: string
+                                      type:
+                                        type: string
+                                      table:
+                                        type: string
+                                      position:
+                                        type: number
+                                      defaultValue:
+                                        type: string
+                                      homolValue:
+                                        type: array
+                                        items: {}
+                                      rule:
+                                        type: array
+                                        items: {}
+                  fields:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        description:
+                          type: string
+                        format:
+                          type: string
+                        settings:
+                          type: object
+        quadrature:
+          uniqueItems: false
+          type: array
+          items: {}
+      example:
+        id: "35"
+        name: conciliacion_logistica_01092021
+        shortName: OMS
+        description: OMS
+        categorization: 3
+        business: facl
+        conciliation:
+        - 52
+        consistency: true
+        detail:
+          fileFormat: csv
+          dateFormat: ""
+          titles: true
+          separator:
+            type: delimited
+            value: ","
+          numOfRecords: 1
+          records:
+          - record: 1
+            type: detail
+            identifier: ""
+            configuration: {}
+            settings:
+              destination:
+              - warehouse: BIGQUERY
+                table: ENRICHMENT
+              trim: true
+              underscore: false
+              letterCase: ""
+              processFields:
+              - name: Today Date
+                description: date
+                settings:
+                  homologation:
+                  - name: quadrature_date
+                    type: date
+                    table: enrichment
+                    position: 0
+                    homolValue: []
+                    rule: []
+              - name: id
+                description: response
+                settings:
+                  homologation:
+                  - name: origin_id
+                    type: number
+                    table: enrichment
+                    position: 0
+                    homolValue: []
+                    rule: []
+              - name: business
+                description: response
+                settings:
+                  homologation:
+                  - name: business
+                    type: character varying
+                    table: enrichment
+                    position: 0
+                    homolValue: []
+                    rule: []
+              - name: uuid
+                description: generated
+                settings:
+                  homologation:
+                  - name: id
+                    type: character varying
+                    table: enrichment
+                    position: 0
+                    homolValue: []
+                    rule: []
+              - name: conciliation
+                description: response
+                settings:
+                  homologation:
+                  - name: conciliation_process_id
+                    type: number
+                    table: enrichment
+                    position: 0
+                    homolValue: []
+                    rule: []
+              - name: File Exact Name with Date and extension
+                description: file
+                settings:
+                  homologation:
+                  - name: origin_exact_name
+                    type: character varying
+                    table: enrichment
+                    position: 0
+                    homolValue: []
+                    rule: []
+            fields:
+            - name: ID_EMPRESA
+              description: ""
+              format: Sin Formato
+              settings: {}
+            - name: NRO_BOLETA
+              description: ""
+              format: Sin Formato
+              settings: {}
+            - name: ESTADO_LOGISTICO
+              description: ""
+              format: Sin Formato
+              settings:
+                homologation:
+                - name: transaction_stage
+                  type: character varying
+                  position: 3
+                  homolValue:
+                  - current: Entregado Tda
+                    new: DELIVERED
+                  - current: Entregado
+                    new: DELIVERED
+                  rule: []
+            - name: ORDEN_FALABELLA
+              description: ""
+              format: Sin Formato
+              settings:
+                homologation:
+                - name: unique_number
+                  type: character varying
+                  position: 4
+                  table: enrichment
+                  rule: []
+            - name: FECHA_CAMBIO_ESTADO
+              description: ""
+              format: DD/MM/YY HH:mm:ss
+              settings:
+                homologation:
+                - name: settlement_date
+                  type: date
+                  position: 5
+                  table: enrichment
+                  homolValue: []
+                  rule: []
+                - name: sale_date
+                  type: date
+                  position: 5
+                  table: enrichment
+                  homolValue: []
+                  rule: []
+            - description: ""
+              format: Sin Formato
+              settings: {}
+            - name: SKU
+              description: ""
+              format: Sin Formato
+              settings:
+                homologation:
+                - name: product_code
+                  type: character varying
+                  position: 7
+                  table: enrichment
+                  homolValue: []
+                  rule: []
+            - name: PRECIO_UNITARIO
+              description: ""
+              format: Entero
+              settings: {}
+            - name: DESCUENTO
+              description: ""
+              format: Entero
+              settings: {}
+            - name: CARGO_ENVIO
+              description: ""
+              format: Entero
+              settings: {}
+            - name: MONTO
+              description: ""
+              format: Entero
+              settings:
+                homologation:
+                - name: detail_amount
+                  type: number
+                  position: 8
+                  table: enrichment
+                  homolValue: []
+                  rule: []
+        quadrature: []
